@@ -49,11 +49,13 @@ class resnet_50(nn.Module):
             nn.Flatten(),
             nn.Linear(in_features=2048*7*7,out_features=1024),
             nn.LeakyReLU(0.03),
-            nn.Linear(1024,classes)
+            nn.Linear(1024,classes),
+            nn.Softmax(dim=1)
         )
 
     def forward(self,x):
         return self.model(x)
+    
 
 
 

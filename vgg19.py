@@ -55,7 +55,8 @@ class vgg19(nn.Module):
                                  nn.Flatten(),
                                  nn.Linear(7*7*512,4096),
                                  nn.ReLU(),
-                                 nn.Linear(4096,classes)
+                                 nn.Linear(4096,classes),
+                                 nn.Softmax(dim=1)
                     )
         
     def forward(self,x):
