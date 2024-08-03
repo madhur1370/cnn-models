@@ -13,13 +13,11 @@ transform=transforms.Compose({
 
 
 device="cuda:0" if torch.cuda.is_available() else "cpu"
+train,test=ImageFolder(root='dataset/Training',transform=transform),ImageFolder(root='dataset/Testing',transform=transform)
 
-dataset=ImageFolder(root='dataset',transform=transform)
-classes=dataset.classes
-
+classes=train.classes
 model=resnet_50(classes=len(classes)).to(device=device)
 
-train,test=random_split(dataset=dataset,lengths=[len(dataset)-200,200])
 train_loader,test_loader=DataLoader(dataset=train,shuffle=True,batch_size=4),DataLoader(dataset=test,shuffle=True,batch_size=4)
 
 loss_fn=nn.CrossEntropyLoss()
