@@ -13,7 +13,9 @@ class base(nn.Module):
         self.connect=nn.Sequential(nn.Conv2d(in_channels=in_ch,out_channels=256*n,kernel_size=1,stride=Stride),nn.BatchNorm2d(256*n))
 
     def forward(self,x):
-        out=self.bb3(self.con3(self.relu(self.bb2(self.con2(self.relu(self.bb1(self.con1(x))))))))
+        out=self.relu(self.bb1(self.con1(x)))
+        out=self.relu(self.bb2(self.con2(out)))
+        out=self.relu(self.bb3(self.con3(out)))
         out+=self.connect(x)
         return self.relu(out)
     
@@ -24,7 +26,7 @@ class resnet_50(nn.Module):
         self.model=nn.Sequential(
             nn.Conv2d(in_channels=3,out_channels=64,kernel_size=7,stride=2,padding=3),
             nn.BatchNorm2d(64),
-            nn.MaxPool2d(kernel_size=3,stride=2),
+            nn.MaxPool2d(kernel_size=2,stride=2),
             #layer1
             base(in_ch=64),
             base(in_ch=256),
@@ -35,22 +37,21 @@ class resnet_50(nn.Module):
             base(in_ch=512,Stride=1,n=2),
             base(in_ch=512,Stride=1,n=2),
             #layer3
-            base(in_ch=512,Stride=2,n=3),
-            base(in_ch=1024,Stride=1,n=3),
-            base(in_ch=1024,Stride=1,n=3),
-            base(in_ch=1024,Stride=1,n=3),
-            base(in_ch=1024,Stride=1,n=3),
-            base(in_ch=1024,Stride=1,n=3),
+            base(in_ch=512,Stride=2,n=4),
+            base(in_ch=1024,Stride=1,n=4),
+            base(in_ch=1024,Stride=1,n=4),
+            base(in_ch=1024,Stride=1,n=4),
+            base(in_ch=1024,Stride=1,n=4),
+            base(in_ch=1024,Stride=1,n=4),
             #layer 
-            base(in_ch=1024,Stride=2,n=2),
-            base(in_ch=2048,Stride=1,n=2),
-            base(in_ch=2048,Stride=1,n=2),
+            base(in_ch=1024,Stride=2,n=8),
+            base(in_ch=2048,Stride=1,n=8),
+            base(in_ch=2048,Stride=1,n=8),
 
             nn.Flatten(),
             nn.Linear(in_features=2048*7*7,out_features=1024),
             nn.LeakyReLU(0.03),
-            nn.Linear(1024,classes),
-            nn.Softmax(dim=1)
+            nn.Linear(1024,classes)
         )
 
     def forward(self,x):
